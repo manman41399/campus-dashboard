@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh‑CN">
+<head>
+  <meta charset="UTF‑8" />
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0"/>
+  <title>校园新生机会看板</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft Yahei",sans-serif;}
+    body{background:#f4f7fa;padding:24px;max-width:1100px;margin:0 auto;color:#222;}
+    h1{text-align:center;color:#2563eb;margin-bottom:8px;font-size:28px;}
+    .desc{text-align:center;color:#555;margin-bottom:24px;}
+    .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;justify-content:center;}
+    .filter-btn{padding:8px 16px;border:none;border-radius:6px;background:#e2e8f0;cursor:pointer;font-size:14px;}
+    .filter-btn.active{background:#2563eb;color:white;}
+    .item-list{display:grid;gap:16px;}
+    .card{background:white;padding:18px;border-radius:10px;box-shadow:0 2px 8px #00000012;}
+    .card.urgent{border-left:6px solid #ef4444;}
+    .card h3{font-size:18px;margin-bottom:6px;}
+    .meta{font-size:14px;color:#666;margin:6px 0;line-height:1.6;}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .tag{font-size:12px;padding:3px 8px;border-radius:4px;}
+    .tag‑fresh{background:#dbeafe;color:#1d4ed8;}
+    .tag‑score{background:#dcfce7;color:#15803d;}
+  </style>
+</head>
+<body>
+  <h1>校园新生机会看板</h1>
+  <p class="desc">聚合竞赛、讲座、社团、奖学金，帮大一新生快速筛选校园机会</p >
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data‑type="all">全部</button>
+    <button class="filter-btn" data‑type="compete">竞赛</button>
+    <button class="filter-btn" data‑type="lecture">讲座</button>
+    <button class="filter-btn" data‑type="club">社团招新</button>
+    <button class="filter-btn" data‑type="scholar">奖学金</button>
+  </div>
+
+  <div class="item-list" id="list"></div>
+
+<script>
+const data = [
+  {
+    title:"大学生创新创业训练计划",
+    type:"compete",
+    time:"报名：9.20‑9.28",
+    place:"线上申报",
+    deadline:"2026‑09‑28",
+    desc:"大创项目申报，可组队，结题后可加综测，零基础大一可以参与",
+    tags:["适合大一","可加综测"],
+    urgent:true
+  },
+  {
+    title:"计算机学科科普讲座",
+    type:"lecture",
+    time:"9‑22 19:00‑21:00",
+    place:"教学楼E105",
+    deadline:"2026‑09‑22",
+    desc:"面向计科新生，了解专业发展方向，到场可签讲座学时",
+    tags:["适合大一"],
+    urgent:true
+  },
+  {
+    title:"计算机协会招新",
+    type:"club",
+    time:"9‑23全天",
+    place:"学生活动中心",
+    deadline:"2026‑09‑25",
+    desc:"学习C++、网页制作，认识同专业同学，面试门槛友好",
+    tags:["适合大一"],
+    urgent:false
+  },
+  {
+    title:"国家奖学金申请通知",
+    type:"scholar",
+    time:"提交材料9.30前",
+    place:"学院教务办公室",
+    deadline:"2026‑09‑30",
+    desc:"奖励学业优秀同学，大一一般申请国家励志奖学金，看清申请条件",
+    tags:["可加综测"],
+    urgent:false
+  },
+  {
+    title:"英语演讲比赛",
+    type:"compete",
+    time:"初赛10‑08",
+    place:"线上提交视频",
+    deadline:"2026‑10‑01",
+    desc:"锻炼口语，获奖可用于综测加分，无硬性参赛门槛",
+    tags:["适合大一","可加综测"],
+    urgent:false
+  }
+];
+
+const listDom = document.getElementById("list");
+let currentType = "all";
+
+function render(){
+  listDom.innerHTML = "";
+  const show = currentType==="all" ? data : data.filter(d=>d.type===currentType);
+  show.forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "card" + (item.urgent?" urgent":"");
+    div.innerHTML = `
+      <h3>${item.title}</h3>
+      <div class="meta">
+        <div>⏰${item.time}</div>
+        <div>📍${item.place}</div>
+        <div>📅报名截止：${item.deadline} ${item.urgent?"【即将截止！】":""}</div>
+        <div>ℹ️${item.desc}</div>
+      </div>
+      <div class="tags">
+        ${item.tags.map(t=>{
+          if(t==="适合大一") return `<span class="tag tag‑fresh">${t}</span>`;
+          if(t==="可加综测") return `<span class="tag tag‑score">${t}</span>`;
+          return `<span class="tag">${t}</span>`;
+        }).join("")}
+      </div>
+    `;
+    listDom.appendChild(div);
+  })
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+  btn.onclick = function(){
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    this.classList.add("active");
+    currentType = this.dataset.type;
+    render();
+  }
+})
+render();
+</script>
+</body>
+</html>
